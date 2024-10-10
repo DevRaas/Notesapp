@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes (Mobile)</title>
+    <link rel="stylesheet" href="style-mobile.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Notes</h1>
+        
+        <div class="toolbar">
+            <button id="bold-btn"><strong>B</strong></button>
+            <button id="italic-btn"><i>I</i></button>
+            <button id="underline-btn"><u>U</u></button>
+            <button id="bullets-btn">• Bullet List</button>
+            <select id="font-size-select">
+                <option value="12">12</option>
+                <option value="14">14</option>
+                <option value="16" selected>16</option>
+                <option value="18">18</option>
+                <option value="24">24</option>
+            </select>
+            <select id="font-color-select">
+                <option value="black">Black</option>
+                <option value="red">Red</option>
+                <option value="blue">Blue</option>
+                <option value="green">Green</option>
+            </select>
+        </div>
+
+        <div contenteditable="true" id="note-input" class="editor" placeholder="Type your note here..."></div>
+        <button id="save-btn">Save Note</button>
+    </div>
+
+    <footer>
+        <p>Developed with ❤️ by Roshan</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
