@@ -7,27 +7,22 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="app-container">
-        <header>
-            <h1>Advanced Notes</h1>
-            <input type="text" id="search-input" placeholder="Search notes...">
-            <button id="theme-toggle">🌙 Toggle Theme</button>
-        </header>
-        <main>
-            <div class="note-form">
-                <input type="text" id="note-title" placeholder="Title">
-                <textarea id="note-input" placeholder="Type your note in Markdown..."></textarea>
-                <input type="text" id="note-tags" placeholder="Tags (comma separated)">
-                <div class="buttons">
-                    <button id="save-btn">Save Note</button>
-                    <button id="edit-btn" style="display: none;">Edit Note</button>
-                </div>
-            </div>
-            <h2>Your Notes:</h2>
-            <div id="notes-container"></div>
-        </main>
+    <div class="container">
+        <h1>Advanced Notes App</h1>
+        <input type="text" id="search-input" placeholder="Search notes..." oninput="searchNotes(event)">
+        <form id="note-form">
+            <input type="text" id="note-title" placeholder="Title" required>
+            <textarea id="note-input" placeholder="Write your note here..." required></textarea>
+            <input type="text" id="note-tags" placeholder="Tags (comma-separated)">
+            <button type="button" id="save-btn" onclick="handleSaveNote()">Save</button>
+            <button type="button" id="edit-btn" style="display:none;" onclick="handleEditNote()">Edit</button>
+            <button type="button" id="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+        </form>
+        <div id="notes-container" class="notes-container"></div>
     </div>
+    <footer>
+        <p>Developed with ❤️ by Roshan</p>
+    </footer>
     <script src="app.js"></script>
 </body>
 </html>
-
