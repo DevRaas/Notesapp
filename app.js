@@ -1,42 +1,29 @@
-const webhookURL = 'https://discord.com/api/webhooks/1293946715405156403/uXw38dP_NrdqGd05WwSE2yu4-9iV__13MRtgW0oDclit7d4vNln-GlG78jKJCZjEh1bd'; // Replace with your Discord webhook URL
+const webhookURL = 'https://discord.com/api/webhooks/1293946715405156403/uXw38dP_NrdqGd05WwSE2yu4-9iV__13MRtgW0oDclit7d4vNln-GlG78jKJCZjEh1bd';  // Replace with your Discord webhook URL
 
 let editingNoteId = null;
 
-document.getElementById('save-btn').addEventListener('click', handleSaveNote);
-document.getElementById('edit-btn').addEventListener('click', handleEditNote);
-document.getElementById('search-input').addEventListener('input', searchNotes);
-document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
-
-// Fetch suggestions from Datamuse API
-async function fetchSuggestions(word) {
-    const response = await fetch(`https://api.datamuse.com/sug?s=${word}`);
-    const suggestions = await response.json();
-    return suggestions.map(s => s.word);
-}
-
-// Perform autocorrect
-async function autocorrect(input) {
-    const words = input.split(' ');
-    const correctedWords = [];
-
-    for (const word of words) {
-        const suggestions = await fetchSuggestions(word);
-        correctedWords.push(suggestions.length > 0 ? suggestions[0] : word);
-    }
-    return correctedWords.join(' ');
-}
+document.getElementById('save-btn')?.addEventListener('click', handleSaveNote);
+document.getElementById('edit-btn')?.addEventListener('click', handleEditNote);
+document.getElementById('search-input')?.addEventListener('input', searchNotes);
+document.getElementById('new-note-btn')?.addEventListener('click', () => {
+    window.location.href = 'edit.html'; // Redirect to edit page
+});
 
 // Save note and post to Discord and download
-async function handleSaveNote() {
-    const note = await getNoteFromInput(); // Await the autocorrect functionality
+function handleSaveNote() {
+    const note = getNoteFromInput();
 
-    if (note.text) {
-        addNoteToDOM(note);
-        saveNoteToLocalStorage(note);
-        sendNoteToDiscord(note);
-        downloadNoteAsFile(note);
-        clearInputFields();
+    // Validate input
+    if (!note.title.trim() || !note.text.trim()) {
+        alert("Please enter both a title and some text for the note.");
+        return; // Prevent saving if validation fails
     }
+
+    addNoteToDOM(note);
+    saveNoteToLocalStorage(note);
+    sendNoteToDiscord(note);
+    downloadNoteAsFile(note);
+    clearInputFields();
 }
 
 // Edit a note
@@ -50,16 +37,11 @@ function handleEditNote() {
     document.getElementById('save-btn').style.display = 'inline';
 }
 
-async function getNoteFromInput() {
-    const noteTitle = document.getElementById('note-title').value.trim() || 'Untitled';
+function getNoteFromInput() {
+    const noteTitle = document.getElementById('note-title') ? document.getElementById('note-title').innerText.trim() : 'Untitled';
     const noteText = document.getElementById('note-input').value.trim();
-    const noteTags = document.getElementById('note-tags').value.trim().split(',').map(tag => tag.trim());
     const date = new Date().toLocaleString();
-    
-    // Perform autocorrect on note text
-    const correctedText = await autocorrect(noteText); // Await the autocorrect function
-
-    return { id: Date.now(), title: noteTitle, text: correctedText, tags: noteTags, date };
+    return { id: Date.now(), title: noteTitle, text: noteText, date };
 }
 
 function addNoteToDOM(note) {
@@ -69,7 +51,6 @@ function addNoteToDOM(note) {
         <h3>${note.title}</h3>
         <div class="note-date">${note.date}</div>
         <p>${note.text}</p>
-        <div class="tags">Tags: ${note.tags.join(', ')}</div>
         <button class="edit-btn">Edit</button>
         <button class="delete-btn">X</button>
     `;
@@ -80,9 +61,7 @@ function addNoteToDOM(note) {
 }
 
 function editNoteInDOM(note) {
-    document.getElementById('note-title').value = note.title;
     document.getElementById('note-input').value = note.text;
-    document.getElementById('note-tags').value = note.tags.join(', ');
     editingNoteId = note.id;
     document.getElementById('save-btn').style.display = 'none';
     document.getElementById('edit-btn').style.display = 'inline';
@@ -118,26 +97,9 @@ function loadNotes() {
     notes.forEach(addNoteToDOM);
 }
 
-function searchNotes(event) {
-    const searchText = event.target.value.toLowerCase();
-    const notes = document.querySelectorAll('.note');
-    
-    notes.forEach(note => {
-        const noteTitle = note.querySelector('h3').textContent.toLowerCase();
-        const noteText = note.querySelector('p').textContent.toLowerCase();
-        const tags = note.querySelector('.tags').textContent.toLowerCase();
-
-        if (noteTitle.includes(searchText) || noteText.includes(searchText) || tags.includes(searchText)) {
-            note.style.display = '';
-        } else {
-            note.style.display = 'none';
-        }
-    });
-}
-
 function sendNoteToDiscord(note) {
     const payload = {
-        content: `**${note.title}**\n${note.text}\n*Tags: ${note.tags.join(', ')}*\n*Created on ${note.date}*`
+        content: `**${note.title}**\n${note.text}\n*Created on ${note.date}*`
     };
 
     fetch(webhookURL, {
@@ -152,7 +114,7 @@ function sendNoteToDiscord(note) {
 }
 
 function downloadNoteAsFile(note) {
-    const noteContent = `Title: ${note.title}\n\n${note.text}\n\nTags: ${note.tags.join(', ')}\nCreated on: ${note.date}`;
+    const noteContent = `Title: ${note.title}\n\n${note.text}\n\nCreated on: ${note.date}`;
     const blob = new Blob([noteContent], { type: 'text/plain' });
     const downloadLink = document.createElement('a');
     downloadLink.href = URL.createObjectURL(blob);
@@ -160,14 +122,6 @@ function downloadNoteAsFile(note) {
     downloadLink.click();
 }
 
-function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
-}
-
 function clearInputFields() {
-    document.getElementById('note-title').value = '';
     document.getElementById('note-input').value = '';
-    document.getElementById('note-tags').value = '';
 }
-
-document.addEventListener('DOMContentLoaded', loadNotes);
