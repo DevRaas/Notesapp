@@ -1,4 +1,4 @@
-const webhookURL = 'https://discord.com/api/webhooks/1293946715405156403/uXw38dP_NrdqGd05WwSE2yu4-9iV__13MRtgW0oDclit7d4vNln-GlG78jKJCZjEh1bd';  // Replace with your Discord webhook URL
+const webhookURL = 'https://discord.com/api/webhooks/1293946715405156403/uXw38dP_NrdqGd05WwSE2yu4-9iV__13MRtgW0oDclit7d4vNln-GlG78jKJCZjEh1bd'; // Replace with your Discord webhook URL
 
 let editingNoteId = null;
 
@@ -7,9 +7,28 @@ document.getElementById('edit-btn').addEventListener('click', handleEditNote);
 document.getElementById('search-input').addEventListener('input', searchNotes);
 document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
 
+// Fetch suggestions from Datamuse API
+async function fetchSuggestions(word) {
+    const response = await fetch(`https://api.datamuse.com/sug?s=${word}`);
+    const suggestions = await response.json();
+    return suggestions.map(s => s.word);
+}
+
+// Perform autocorrect
+async function autocorrect(input) {
+    const words = input.split(' ');
+    const correctedWords = [];
+
+    for (const word of words) {
+        const suggestions = await fetchSuggestions(word);
+        correctedWords.push(suggestions.length > 0 ? suggestions[0] : word);
+    }
+    return correctedWords.join(' ');
+}
+
 // Save note and post to Discord and download
-function handleSaveNote() {
-    const note = getNoteFromInput();
+async function handleSaveNote() {
+    const note = await getNoteFromInput(); // Await the autocorrect functionality
 
     if (note.text) {
         addNoteToDOM(note);
@@ -31,12 +50,16 @@ function handleEditNote() {
     document.getElementById('save-btn').style.display = 'inline';
 }
 
-function getNoteFromInput() {
+async function getNoteFromInput() {
     const noteTitle = document.getElementById('note-title').value.trim() || 'Untitled';
     const noteText = document.getElementById('note-input').value.trim();
     const noteTags = document.getElementById('note-tags').value.trim().split(',').map(tag => tag.trim());
     const date = new Date().toLocaleString();
-    return { id: Date.now(), title: noteTitle, text: noteText, tags: noteTags, date };
+    
+    // Perform autocorrect on note text
+    const correctedText = await autocorrect(noteText); // Await the autocorrect function
+
+    return { id: Date.now(), title: noteTitle, text: correctedText, tags: noteTags, date };
 }
 
 function addNoteToDOM(note) {
@@ -148,4 +171,3 @@ function clearInputFields() {
 }
 
 document.addEventListener('DOMContentLoaded', loadNotes);
-
