@@ -3,20 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notes</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Notes App</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Notes</h1>
-        <button id="new-note-btn">New Note</button>
-        <div id="notes-container" class="notes-container"></div>
-    </div>
-
-    <footer>
-        <p>Developed with ❤️ by Roshan</p>
-    </footer>
-    
-    <script src="app.js"></script>
+    <script>
+        // Detect if the user is on mobile
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+            window.location.href = 'mobile.html'; // Redirect to mobile version
+        } else {
+            window.location.href = 'editor.html'; // Redirect to desktop (Microsoft Word-like) version
+        }
+    </script>
 </body>
 </html>
