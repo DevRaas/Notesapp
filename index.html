@@ -3,26 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Notes App</title>
+    <title>Notes</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>Advanced Notes App</h1>
-        <input type="text" id="search-input" placeholder="Search notes..." oninput="searchNotes(event)">
-        <form id="note-form">
-            <input type="text" id="note-title" placeholder="Title" required>
-            <textarea id="note-input" placeholder="Write your note here..." required></textarea>
-            <input type="text" id="note-tags" placeholder="Tags (comma-separated)">
-            <button type="button" id="save-btn" onclick="handleSaveNote()">Save</button>
-            <button type="button" id="edit-btn" style="display:none;" onclick="handleEditNote()">Edit</button>
-            <button type="button" id="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
-        </form>
+        <h1>Notes</h1>
+        <button id="new-note-btn">New Note</button>
         <div id="notes-container" class="notes-container"></div>
     </div>
+
     <footer>
         <p>Developed with ❤️ by Roshan</p>
     </footer>
+    
     <script src="app.js"></script>
 </body>
 </html>
